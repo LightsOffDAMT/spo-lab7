@@ -1,0 +1,49 @@
+#!/bin/bash
+
+ERR_PATH="$HOME/lab1_err"
+ERR_MSG="An error occured! See $ERR_PATH for details"
+
+while true
+do
+    echo '1. Напечатать имя текущего каталога'
+    echo '2. Сменить текущий каталог'
+    echo '3. Напечатать содержимое текущего каталога'
+    echo '4. Создать косвенную (символьную) ссылку на файл'
+    echo '5. Выполнить введенную команду'
+    echo '6. Выйти из программы'
+    echo 'Выберите пункт меню:'
+
+    read menu || break
+
+    echo
+    case "$menu" in
+        1)
+            echo $(basename "$PWD")  2>>"$ERR_PATH" || echo $ERR_MSG 1>&2
+        ;;
+        2)
+	    echo 'Введите путь к каталогу'
+	    read dir_name
+            cd "$dir_name" 2>> "$ERR_PATH" || echo $ERR_MSG 1>&2
+        ;;
+        3)
+            ls 2>>"$ERR_PATH" || echo 'Unknown error!' 1>&2
+        ;;
+        4)
+            echo 'Введите путь к исходному файлу:'
+            read file_name
+            echo 'Введите путь к символьной ссылке:'
+            read link_name
+            ln -s "$file_name" "$link_name" 2>>"$ERR_PATH" || echo $ERR_MSG 1>&2
+        ;;
+        5)
+            echo 'Введите команду'
+            read command_name
+	    echo $($command_name 2>>"$ERR_PATH" || echo $ERR_MSG 1>&2)
+        ;;
+	6)
+            exit 0
+    esac
+    echo
+
+done
+
